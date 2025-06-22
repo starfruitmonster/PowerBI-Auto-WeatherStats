@@ -24,17 +24,17 @@ if not access_token:
 headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
 pbi_url = "https://api.powerbi.com/v1.0/myorg"
 
-# Step 2: List workspaces
-groups = requests.get(f"{pbi_url}/groups", headers=headers).json().get("value", [])
-workspace = next((g for g in groups if g['name'] == "WeatherStats Workspace"), None)
+# Step 2: Get workspace
+groups = requests.get(f"{pbi_url}/groups", headers=headers).json()["value"]
+workspace = next((g for g in groups if g["name"] == "WeatherStats Workspace"), None)
 if not workspace:
     print("Workspace not found.")
     exit(1)
 group_id = workspace["id"]
 
-# Step 3: List datasets
-datasets = requests.get(f"{pbi_url}/groups/{group_id}/datasets", headers=headers).json().get("value", [])
-dataset = next((d for d in datasets if d['name'] == "WeatherStats"), None)
+# Step 3: Get dataset
+datasets = requests.get(f"{pbi_url}/groups/{group_id}/datasets", headers=headers).json()["value"]
+dataset = next((d for d in datasets if d["name"] == "WeatherStats"), None)
 if not dataset:
     print("Dataset not found.")
     exit(1)
@@ -51,13 +51,10 @@ row_data = {
     }]
 }
 push_url = f"{pbi_url}/groups/{group_id}/datasets/{dataset_id}/tables/WeatherStats/rows"
-push_res = requests.post(push_url, headers=headers, json=row_data)
-print("Row push result:", push_res.status_code)
+res = requests.post(push_url, headers=headers, json=row_data)
+print("Push row result:", res.status_code, res.text)
 
-# Step 5: Trigger refresh
+# Step 5: Refresh (optional but included for realism)
 refresh_url = f"{pbi_url}/groups/{group_id}/datasets/{dataset_id}/refreshes"
-refresh_res = requests.post(refresh_url, headers=headers)
-if refresh_res.status_code == 202:
-    print("Refresh triggered successfully.")
-else:
-    print("Refresh failed:", refresh_res.text)
+r = requests.post(refresh_url, headers=headers)
+print("Refresh status:", r.status_code)
