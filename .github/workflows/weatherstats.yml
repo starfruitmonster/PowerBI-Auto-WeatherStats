@@ -1,9 +1,9 @@
-name: WeatherStats
+name: WeatherStats E5 Auto-Renew
 
 on:
   schedule:
-    - cron: "0 */3 * * *"  # Runs every 3 hours
-  workflow_dispatch:        # Allows manual triggering
+    - cron: "0 */3 * * *"
+  workflow_dispatch:
 
 jobs:
   renew:
@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Run WeatherStats Script
+      - name: Run WeatherStats Auto-Renewal
         env:
           CLIENT_ID: ${{ secrets.CONFIG_ID }}
           CLIENT_SECRET: ${{ secrets.CONFIG_KEY }}
