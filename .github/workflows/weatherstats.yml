@@ -1,5 +1,4 @@
-name: WeatherStats E5 Auto-Renew
-
+name: WeatherStats
 on:
   schedule:
     - cron: "0 */3 * * *"
